@@ -158,11 +158,17 @@ class WashTypeBottomSheet {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const InstantWashScreen()),
-                        );
+                        if (selectedType == "instant") {
+                          Navigator.pop(context); // close bottomsheet first
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const InstantWashScreen(),
+                            ),
+                          );
+                        } else if (selectedType == "daily") {
+                          Navigator.pop(context); // just close the popup
+                        }
                       },
                       child: const Text(
                         "Continue",

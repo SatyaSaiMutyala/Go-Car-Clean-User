@@ -41,32 +41,32 @@ class _SettingScreenState extends State<SettingScreen> {
                 });
               },
             ),
-          SettingItemWidget(
-            leading: ic_language.iconImage(size: 17).paddingOnly(left: 2),
-            paddingAfterLeading: 16,
-            title: language.language,
-            trailing: trailing,
-            titleTextStyle: primaryTextStyle(),
-            onTap: () {
-              LanguagesScreen().launch(context).then((value) {
-                setState(() {});
-              });
-            },
-          ),
-          SettingItemWidget(
-            leading: ic_dark_mode.iconImage(size: 22),
-            title: language.appTheme,
-            paddingAfterLeading: 12,
-            trailing: trailing,
-            titleTextStyle: primaryTextStyle(),
-            onTap: () async {
-              await showInDialog(
-                context,
-                builder: (context) => ThemeSelectionDaiLog(),
-                contentPadding: EdgeInsets.zero,
-              );
-            },
-          ),
+          // SettingItemWidget(
+          //   leading: ic_language.iconImage(size: 17).paddingOnly(left: 2),
+          //   paddingAfterLeading: 16,
+          //   title: language.language,
+          //   trailing: trailing,
+          //   titleTextStyle: primaryTextStyle(),
+          //   onTap: () {
+          //     LanguagesScreen().launch(context).then((value) {
+          //       setState(() {});
+          //     });
+          //   },
+          // ),
+          // SettingItemWidget(
+          //   leading: ic_dark_mode.iconImage(size: 22),
+          //   title: language.appTheme,
+          //   paddingAfterLeading: 12,
+          //   trailing: trailing,
+          //   titleTextStyle: primaryTextStyle(),
+          //   onTap: () async {
+          //     await showInDialog(
+          //       context,
+          //       builder: (context) => ThemeSelectionDaiLog(),
+          //       contentPadding: EdgeInsets.zero,
+          //     );
+          //   },
+          // ),
           SettingItemWidget(
             leading: ic_slider_status.iconImage(size: SETTING_ICON_SIZE),
             title: language.lblAutoSliderStatus,

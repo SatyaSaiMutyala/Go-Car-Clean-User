@@ -12,31 +12,45 @@ class NewJobRequestComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16),
-      decoration: boxDecorationWithRoundedCorners(
-        backgroundColor: context.primaryColor,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(defaultRadius), topRight: Radius.circular(defaultRadius)),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(defaultRadius),
+          topRight: Radius.circular(defaultRadius),
+        ),
+        image: const DecorationImage(
+          image: AssetImage('assets/images/img_new_post_job_1.png'),
+          fit: BoxFit.cover,
+        ),
       ),
       width: context.width(),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // ✅ Align to left
         children: [
           16.height,
-          Text(language.jobRequestSubtitle, style: primaryTextStyle(color: white, size: 16), textAlign: TextAlign.center),
+          Text(
+            language.jobRequestSubtitle,
+            style: primaryTextStyle(color: Colors.black, size: 16, weight: FontWeight.bold), // ✅ Black text
+            textAlign: TextAlign.left, // ✅ Left aligned
+          ),
           20.height,
           AppButton(
+            color: context.primaryColor, // ✅ Primary color background
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.add, color: appStore.isDarkMode ? Colors.white : context.primaryColor),
+                Icon(Icons.add, color: Colors.black), // ✅ White icon
                 4.width,
-                Text(language.newPostJobRequest, style: boldTextStyle(color: appStore.isDarkMode ? Colors.white : context.primaryColor)),
+                Text(
+                  language.newPostJobRequest,
+                  style: boldTextStyle(color: Colors.black), // ✅ White text on button
+                ),
               ],
             ),
-            textStyle: primaryTextStyle(color: appStore.isDarkMode ? textPrimaryColorGlobal : context.primaryColor),
             onTap: () async {
               if (appStore.isLoggedIn) {
                 MyPostRequestListScreen().launch(context);
               } else {
-                setStatusBarColor(Colors.white, statusBarIconBrightness: Brightness.dark);
+                setStatusBarColor(Colors.black, statusBarIconBrightness: Brightness.dark);
                 bool? res = await SignInScreen(returnExpected: true).launch(context);
 
                 if (res ?? false) {

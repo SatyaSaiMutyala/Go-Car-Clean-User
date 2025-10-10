@@ -13,6 +13,9 @@ class LanguageAr extends BaseLanguage {
   String get walkTitle3 => 'تتبع وإدارة الحجوزات الخاصة بك';
 
   @override
+  String get walkTitle4 => 'تتبع وإدارة الحجوزات الخاصة بك';
+
+  @override
   String get getStarted => 'البدء';
 
   @override
@@ -245,6 +248,9 @@ class LanguageAr extends BaseLanguage {
 
   @override
   String get walkThrough3 => 'تتبع حالة الخدمة الخاصة بك في الوقت الحقيقي. عرض وإدارة حجوزاتك الحالية والسابقة. إعادة جدولة أو إلغاء الخدمات القادمة دون عناء.';
+
+@override
+  String get walkThrough4 => 'تتبع حالة الخدمة الخاصة بك في الوقت الحقيقي. عرض وإدارة حجوزاتك الحالية والسابقة. إعادة جدولة أو إلغاء الخدمات القادمة دون عناء.';
 
   @override
   String lblNotification = "إشعارات";
@@ -2118,4 +2124,5 @@ class LanguageAr extends BaseLanguage {
 
   @override
   String get chooseWithdrawalMethod => "اختر طريقة السحب";
+  
 }

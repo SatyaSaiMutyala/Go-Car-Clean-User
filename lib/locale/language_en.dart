@@ -3,13 +3,16 @@ import 'package:booking_system_flutter/utils/configs.dart';
 
 class LanguageEn extends BaseLanguage {
   @override
-  String get walkTitle1 => 'Create and Set Up Your Account';
+  String get walkTitle1 => 'Welcome To Gocarclean';
 
   @override
-  String get walkTitle2 => 'Browse and Book Services';
+  String get walkTitle2 => 'Find Your Service';
 
   @override
-  String get walkTitle3 => 'Track and Manage Your Bookings';
+  String get walkTitle3 => 'Book The Appointment';
+
+  @override
+  String get walkTitle4 => 'Payment Gateway';
 
   @override
   String get getStarted => 'Get Started';
@@ -189,7 +192,7 @@ class LanguageEn extends BaseLanguage {
   String get serviceName => 'Service Name';
 
   @override
-  String get service => 'Services';
+  String get service => 'Nearby Services';
 
   @override
   String get lblCancelReason => 'Please give reason for canceling this Booking';
@@ -240,11 +243,13 @@ class LanguageEn extends BaseLanguage {
   String get walkThrough1 => 'Sign up or log in to your account using your email or social media profiles. Completing your profile ensures a seamless booking experience.';
 
   @override
-  String get walkThrough2 =>
-      'Explore a wide range of services available in your area. Select a service, choose a convenient time slot, and provide your location details to book a service quickly and easily.';
+  String get walkThrough2 => 'Find your service as per your preferences.';
 
   @override
-  String get walkThrough3 => 'Keep track of your service status in real-time. View and manage your current and past bookings. Reschedule or cancel upcoming services effortlessly.';
+  String get walkThrough3 => 'Book your services on your own time.';
+
+  @override
+  String get walkThrough4 => 'Choose the preferable options of payment and get best service.';
 
   @override
   String get lblNotification => "Notifications";
@@ -580,7 +585,7 @@ class LanguageEn extends BaseLanguage {
   String get lblLogoutTitle => "Oh No, You Are Leaving!";
 
   @override
-  String get lblLogoutSubTitle => "Do you want to logout?";
+  String get lblLogoutSubTitle => "Are you sure you want to logout?";
 
   @override
   String get lblFeaturedProduct => "This is Featured Product";
@@ -2117,4 +2122,5 @@ class LanguageEn extends BaseLanguage {
 
   @override
   String get chooseWithdrawalMethod => "Choose Withdrawal Method";
+
 }

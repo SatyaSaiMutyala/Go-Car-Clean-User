@@ -52,22 +52,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
     afterBuildCreated(() async {
       /// Changes System theme when changed
       if (getIntAsync(THEME_MODE_INDEX) == THEME_MODE_SYSTEM) {
-        appStore.setDarkMode(context.platformBrightness() == Brightness.dark);
+        // appStore.setDarkMode(context.platformBrightness() == Brightness.dark);
+        appStore.setDarkMode(true);
+        defaultToastBackgroundColor = Colors.white;
+        defaultToastTextColor = Colors.black;
       }
 
       View.of(context).platformDispatcher.onPlatformBrightnessChanged = () async {
         if (getIntAsync(THEME_MODE_INDEX) == THEME_MODE_SYSTEM) {
-          appStore.setDarkMode(MediaQuery.of(context).platformBrightness == Brightness.light);
+          // appStore.setDarkMode(MediaQuery.of(context).platformBrightness == Brightness.light);
+          appStore.setDarkMode(true);
+          defaultToastBackgroundColor = Colors.white;
+          defaultToastTextColor = Colors.black;
         }
       };
     });
 
-     Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted && !_isBottomSheetShown) {
-          _isBottomSheetShown = true;
-          WashTypeBottomSheet.show(context);
-        }
-      });
+     if (!(widget.redirectToBooking.validate(value: false))) {
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted && !_isBottomSheetShown) {
+        _isBottomSheetShown = true;
+        WashTypeBottomSheet.show(context);
+      }
+    });
+  }
 
     /// Handle Firebase Notification click and redirect to that Service & BookDetail screen
     LiveStream().on(LIVESTREAM_FIREBASE, (value) {

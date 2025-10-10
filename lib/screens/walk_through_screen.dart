@@ -23,10 +23,10 @@ class _WalkThroughScreenState extends State<WalkThroughScreen> {
     init();
 
     afterBuildCreated(() async {
-      // pages.add(WalkThroughModelClass(title: language.lblWelcomeToHandyman, image: walk_Img1, subTitle: language.lblWalkThrough0));
-      pages.add(WalkThroughModelClass(title: language.walkTitle1, image: walk_Img2, subTitle: language.walkThrough1));
-      pages.add(WalkThroughModelClass(title: language.walkTitle2, image: walk_Img3, subTitle: language.walkThrough2));
-      pages.add(WalkThroughModelClass(title: language.walkTitle3, image: walk_Img4, subTitle: language.walkThrough3));
+      pages.add(WalkThroughModelClass(title: language.walkTitle1, image: walk_Img1, subTitle: language.walkThrough1));
+      pages.add(WalkThroughModelClass(title: language.walkTitle2, image: walk_Img2, subTitle: language.walkThrough2));
+      pages.add(WalkThroughModelClass(title: language.walkTitle3, image: walk_Img3, subTitle: language.walkThrough3));
+      pages.add(WalkThroughModelClass(title: language.walkTitle4, image: walk_Img4, subTitle: language.walkThrough4));
 
       setState(() {});
     });
@@ -70,16 +70,22 @@ class _WalkThroughScreenState extends State<WalkThroughScreen> {
               itemBuilder: (BuildContext context, int index) {
                 WalkThroughModelClass page = pages[index];
                 return Container(
-                  padding: EdgeInsets.only(left: 30, right: 30),
+                  padding: EdgeInsets.only(left: 0, right: 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset(page.image.validate(), height: context.height() * 0.45),
                       76.height,
-                      Text(page.title.toString(), style: boldTextStyle(size: 22)),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(page.title.toString(), style: boldTextStyle(size: 22)),
+                      ),
                       16.height,
-                      Text(page.subTitle.toString(), style: secondaryTextStyle()),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(page.subTitle.toString(), style: secondaryTextStyle()),
+                      ),
                     ],
                   ),
                 );

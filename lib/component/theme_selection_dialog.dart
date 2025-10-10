@@ -21,7 +21,7 @@ class ThemeSelectionDaiLogState extends State<ThemeSelectionDaiLog> {
   }
 
   Future<void> init() async {
-    currentIndex = getIntAsync(THEME_MODE_INDEX, defaultValue: THEME_MODE_SYSTEM);
+    currentIndex = getIntAsync(THEME_MODE_INDEX, defaultValue: THEME_MODE_DARK);
   }
 
   @override
@@ -71,11 +71,17 @@ class ThemeSelectionDaiLogState extends State<ThemeSelectionDaiLog> {
                     currentIndex = val;
 
                     if (val == THEME_MODE_SYSTEM) {
-                      appStore.setDarkMode(context.platformBrightness() == Brightness.dark);
+                      // appStore.setDarkMode(context.platformBrightness() == Brightness.dark);
+                      appStore.setDarkMode(true);
+                      defaultToastBackgroundColor = Colors.white;
+                      defaultToastTextColor = Colors.black;
                     } else if (val == THEME_MODE_LIGHT) {
-                      appStore.setDarkMode(false);
-                      defaultToastBackgroundColor = Colors.black;
-                      defaultToastTextColor = Colors.white;
+                      // appStore.setDarkMode(false);
+                      // defaultToastBackgroundColor = Colors.black;
+                      // defaultToastTextColor = Colors.white;
+                      appStore.setDarkMode(true);
+                      defaultToastBackgroundColor = Colors.white;
+                      defaultToastTextColor = Colors.black;
                     } else if (val == THEME_MODE_DARK) {
                       appStore.setDarkMode(true);
                       defaultToastBackgroundColor = Colors.white;

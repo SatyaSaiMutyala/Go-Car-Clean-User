@@ -1,6 +1,21 @@
+import 'package:booking_system_flutter/component/cached_image_widget.dart';
+import 'package:booking_system_flutter/component/empty_error_state_widget.dart';
+import 'package:booking_system_flutter/main.dart';
+import 'package:booking_system_flutter/model/category_model.dart';
+import 'package:booking_system_flutter/model/dashboard_model.dart';
+import 'package:booking_system_flutter/model/service_data_model.dart';
+import 'package:booking_system_flutter/network/rest_apis.dart';
+import 'package:booking_system_flutter/screens/dashboard/component/category_component.dart';
+import 'package:booking_system_flutter/screens/dashboard/component/category_component_instance.dart';
+import 'package:booking_system_flutter/screens/filter/filter_screen.dart';
+import 'package:booking_system_flutter/screens/service/component/service_component.dart';
+import 'package:booking_system_flutter/store/filter_store.dart';
+import 'package:booking_system_flutter/utils/common.dart';
+import 'package:booking_system_flutter/utils/images.dart';
+import 'package:booking_system_flutter/utils/string_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
-
+import 'package:booking_system_flutter/utils/constant.dart';
 import 'view_instant_carwash.dart';
 
 class InstantWashScreen extends StatefulWidget {
@@ -13,186 +28,306 @@ class InstantWashScreen extends StatefulWidget {
 class _InstantWashScreenState extends State<InstantWashScreen> {
   TextEditingController searchCont = TextEditingController();
   FocusNode myFocusNode = FocusNode();
+  Future<DashboardResponse>? future;
+  CategoryData? selectedCategory;
+  Future<List<CategoryData>>? futureSubcategories;
+  ServiceData dummyService = ServiceData(
+    id: 14,
+    name: "Dummy Service",
+    description: "This is a placeholder service for demo",
+    // add other required fields if your model enforces them
+  );
+  int page = 1;
+  bool isLastPage = false;
+  
+
+  @override
+  void initState() {
+    super.initState();
+    filterStore = FilterStore();
+    init();
+  }
+
+  void init() {
+    future = userDashboard(
+      isCurrentLocation: appStore.isCurrentLocation,
+      lat: getDoubleAsync(LATITUDE),
+      long: getDoubleAsync(LONGITUDE),
+    );
+    setState(() {});
+  }
+
+  void loadSubcategories(int catId) {
+    futureSubcategories = getSubCategoryListAPI(catId: catId);
+    setState(() {});
+  }
+
+  void fetchAllServiceData() {
+    searchServiceAPI(
+      page: page,
+      list: [],
+      categoryId: selectedCategory != null ? selectedCategory!.id.toString() : filterStore.categoryId.join(','),
+      subCategory: '',
+      providerId: filterStore.providerId.join(","),
+      isPriceMin: filterStore.isPriceMin,
+      isPriceMax: filterStore.isPriceMax,
+      ratingId: filterStore.ratingId.join(','),
+      search: searchCont.text,
+      latitude: appStore.isCurrentLocation ? getDoubleAsync(LATITUDE).toString() : "",
+      longitude: appStore.isCurrentLocation ? getDoubleAsync(LONGITUDE).toString() : "",
+      lastPageCallBack: (p0) {
+        isLastPage = p0;
+      },
+      isFeatured: '',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
-      appBar: AppBar(
-        title: const Text("Instant Car Wash"),
-        backgroundColor: context.primaryColor,
-        automaticallyImplyLeading: true,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// 🔍 Search & Filter Row (reusable style like your ViewAllServiceScreen)
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                AppTextField(
-                  textFieldType: TextFieldType.OTHER,
-                  focus: myFocusNode,
-                  controller: searchCont,
-                  suffix: CloseButton(
-                    onPressed: () {
-                      searchCont.clear();
-                      setState(() {});
-                    },
-                  ).visible(searchCont.text.isNotEmpty),
-                  onFieldSubmitted: (s) {
-                    setState(() {}); // you can trigger API call here
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Search for vehicles",
-                    filled: true,
-                    fillColor: Colors.black54,
-                    border: OutlineInputBorder(
-                      borderRadius: radius(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    hintStyle: secondaryTextStyle(color: Colors.grey),
-                    prefixIcon: const Icon(Icons.search, color: Colors.white54),
-                  ),
-                ).expand(),
-                12.width,
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: boxDecorationDefault(color: context.primaryColor),
-                  child: const Icon(Icons.filter_list, color: Colors.white),
-                ).onTap(() {
-                  toast("Filter clicked");
-                }),
-              ],
-            ),
-          ),
+      appBar: AppBar(title: const Text("Instant Car Wash")),
+      body: SnapHelperWidget<DashboardResponse>(
+        future: future,
+        loadingWidget: Loader(),
+        errorBuilder: (error) => NoDataWidget(
+          title: error,
+          imageWidget: ErrorStateWidget(),
+          retryText: language.reload,
+          onRetry: () {
+            appStore.setLoading(true);
+            init();
+          },
+        ),
+        onSuccess: (snap) {
+          return Column(children: [
+            // Container(
+            //   padding: const EdgeInsets.all(16),
+            //   child: Row(
+            //     children: [
+            //       AppTextField(
+            //         textFieldType: TextFieldType.OTHER,
+            //         focus: myFocusNode,
+            //         controller: searchCont,
+            //         suffix: CloseButton(
+            //           onPressed: () {
+            //             searchCont.clear();
+            //             setState(() {});
+            //           },
+            //         ).visible(searchCont.text.isNotEmpty),
+            //         onFieldSubmitted: (s) {
+            //           setState(() {});
+            //         },
+            //         decoration: InputDecoration(
+            //           hintText: "Search Here...",
+            //           filled: true,
+            //           fillColor: appStore.isDarkMode
+            //               ? Colors.black54
+            //               : Colors.grey.shade200,
+            //           border: OutlineInputBorder(
+            //             borderRadius: radius(12),
+            //             borderSide: BorderSide.none,
+            //           ),
+            //           hintStyle: secondaryTextStyle(color: Colors.grey),
+            //           prefixIcon: Icon(
+            //             Icons.search,
+            //             color: appStore.isDarkMode
+            //                 ? Colors.white54
+            //                 : Colors.black54,
+            //           ),
+            //         ),
+            //       ).expand(),
+            //       12.width,
+            //       Container(
+            //         padding: const EdgeInsets.all(10),
+            //         decoration:
+            //             boxDecorationDefault(color: context.primaryColor),
+            //         child: Image.asset(
+            //           filter_image,
+            //           height: 24,
+            //           width: 24,
+            //           color: appStore.isDarkMode ? Colors.white : Colors.black,
+            //         ),
+            //       ).onTap(() {
+            //         toast("Filter clicked");
+            //       }),
+            //     ],
+            //   ),
+            // ),
 
-          /// 🚗 Vehicle Categories
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                _vehicleCategory("Car",
-                    "https://cdn-icons-png.flaticon.com/512/743/743131.png"),
-                _vehicleCategory("Bike",
-                    "https://cdn-icons-png.flaticon.com/512/1047/1047711.png"),
-                _vehicleCategory("Scooty",
-                    "https://cdn-icons-png.flaticon.com/512/2972/2972185.png"),
-                _vehicleCategory("Bus",
-                    "https://cdn-icons-png.flaticon.com/512/61/61222.png"),
-              ],
-            ),
-          ),
-
-          20.height,
-          Text("Modals", style: boldTextStyle(color: Colors.white, size: 18))
-              .paddingSymmetric(horizontal: 16),
-          // here I want to add tabbar so make that code here
-          12.height,
-
-          /// 🚙 Car Models
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: [
-                _carCard("SUV", "XUV300",
-                    "https://stimg.cardekho.com/images/carexteriorimages/630x420/Mahindra/XUV-3XO/10184/1751288551835/front-left-side-47.jpg?imwidth=420&impolicy=resize"),
-                16.height,
-                _carCard("SUV", "XUV400",
-                    "https://stimg.cardekho.com/images/carexteriorimages/630x420/Mahindra/XUV-3XO/10184/1751288551835/front-left-side-47.jpg?imwidth=420&impolicy=resize"),
-                16.height,
-                _carCard("SUV", "XUV500",
-                    "https://stimg.cardekho.com/images/carexteriorimages/630x420/Mahindra/XUV-3XO/10184/1751288551835/front-left-side-47.jpg?imwidth=420&impolicy=resize"),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Vehicle category widget
-  Widget _vehicleCategory(String title, String iconUrl) {
-    return Container(
-      margin: const EdgeInsets.only(right: 20),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: Colors.white,
-            child: Image.network(iconUrl, height: 32, fit: BoxFit.contain),
-          ),
-          6.height,
-          Text(title, style: primaryTextStyle(color: Colors.white)),
-        ],
-      ),
-    );
-  }
-
-  /// Car model card widget
-  Widget _carCard(String tag, String name, String imgUrl) {
-    return GestureDetector(
-      onTap: () => {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const ViewInstantWash()))
-      },
-        child: Container(
-      decoration: BoxDecoration(
-        borderRadius: radius(16),
-        color: Colors.black54,
-      ),
-      child: Stack(
-        children: [
-          /// Car image
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-            ),
-            child: Image.network(
-              imgUrl,
-              fit: BoxFit.cover,
-              height: 200,
-              width: double.infinity,
-            ),
-          ),
-
-          /// Tag at top-left corner
-          Positioned(
-            top: 12,
-            left: 12,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: boxDecorationDefault(
-                  color: Colors.blue, borderRadius: radius(8)),
-              child: Text(tag,
-                  style: boldTextStyle(color: Colors.white, size: 12)),
-            ),
-          ),
-
-          /// Bottom gradient bar with model name
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.amber, Colors.brown],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+            Container(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    AppTextField(
+                      textFieldType: TextFieldType.OTHER,
+                      focus: myFocusNode,
+                      controller: searchCont,
+                      suffix: CloseButton(
+                        onPressed: () {
+                          page = 1;
+                          searchCont.clear();
+                          filterStore.setSearch('');
+                          appStore.setLoading(true);
+                          fetchAllServiceData();
+                          setState(() {});
+                        },
+                      ).visible(searchCont.text.isNotEmpty),
+                      onFieldSubmitted: (s) {
+                        page = 1;
+                        filterStore.setSearch(s);
+                        appStore.setLoading(true);
+                        fetchAllServiceData();
+                        setState(() {});
+                      },
+                      decoration: inputDecoration(context).copyWith(
+                        hintText: "${language.lblSearchFor} ${language.allServices}",
+                        prefixIcon: ic_search.iconImage(size: 10).paddingAll(14),
+                        hintStyle: secondaryTextStyle(),
+                      ),
+                    ).expand(),
+                    16.width,
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: boxDecorationDefault(color: context.primaryColor),
+                      child: CachedImageWidget(
+                        url: ic_filter,
+                        height: 26,
+                        width: 26,
+                        color: Colors.white,
+                      ),
+                    ).onTap(() {
+                      hideKeyboard(context);
+                      FilterScreen(isFromProvider: true, isFromCategory: false).launch(context).then((value) {
+                        if (value != null) {
+                          page = 1;
+                          appStore.setLoading(true);
+                          fetchAllServiceData();
+                          setState(() {});
+                        }
+                      });
+                    }, borderRadius: radius()),
+                  ],
                 ),
               ),
-              child: Text(
-                name,
-                style: boldTextStyle(color: Colors.black),
-              ),
+
+            // / Categories
+            CategoryComponentInstance(
+              categoryList: snap.category.validate(),
+              onCategorySelected: (cat) {
+                setState(() {
+                  selectedCategory = cat;
+                });
+                loadSubcategories(cat.id.validate());
+              },
             ),
-          ),
-        ],
+            16.height,
+
+            if (selectedCategory != null)
+              Expanded(
+                child: SnapHelperWidget<List<CategoryData>>(
+                  future: futureSubcategories,
+                  loadingWidget: Loader(),
+                  onSuccess: (subCats) {
+                    if (subCats.isEmpty)
+                      return Center(child: Text("No Subcategories"));
+
+                    return DefaultTabController(
+                      length: subCats.length,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Models",
+                                  style: boldTextStyle(
+                                      color: appStore.isDarkMode
+                                          ? Colors.white
+                                          : Colors.black,
+                                      size: 18))
+                              .paddingSymmetric(horizontal: 16),
+                          12.height,
+
+                          /// 🔹 Dynamic Tabs
+                          TabBar(
+                            isScrollable: true,
+                            indicatorColor: Colors.yellow,
+                            indicatorWeight: 4,
+                            labelColor: appStore.isDarkMode
+                                ? Colors.white
+                                : Colors.black,
+                            unselectedLabelColor: appStore.isDarkMode
+                                ? Colors.white54
+                                : Colors.black54,
+                            labelStyle: boldTextStyle(size: 16),
+                            unselectedLabelStyle: secondaryTextStyle(size: 14),
+                            tabs: subCats
+                                .map((sub) => Tab(text: sub.name.validate()))
+                                .toList(),
+                          ),
+
+                          /// 🔹 Dynamic Tab Views
+                          Expanded(
+                            child: TabBarView(
+                              children: subCats.map((sub) {
+                                return FutureBuilder<List<ServiceData>>(
+                                  future: searchServiceAPI(
+                                    categoryId: selectedCategory!.id.toString(),
+                                    subCategory: sub.id.toString(),
+                                    list: [],
+                                  ),
+                                  builder: (context, snap) {
+                                    if (snap.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Loader();
+                                    }
+                                    if (snap.hasError) {
+                                      return Center(
+                                          child: Text("Error: ${snap.error}"));
+                                    }
+                                    if (snap.data!.isEmpty) {
+                                      return Center(
+                                          child: Text("No services found"));
+                                    }
+
+                                    return ListView.builder(
+                                      padding: const EdgeInsets.all(16),
+                                      itemCount: snap.data!.length,
+                                      itemBuilder: (_, index) {
+                                        return ServiceComponent(
+                                          serviceData: snap.data![index],
+                                          isFromViewAllService: true,
+                                          bookingType: "instance",
+                                        ).paddingBottom(12);
+                                      },
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              )
+            else
+
+              /// 👇 Show message + image if no category is selected
+              Expanded(
+                child: Center(
+                  child: NoDataWidget(
+                    title: "Select a category to book the service",
+                    imageWidget: ErrorStateWidget(),
+                    retryText: language.reload,
+                    onRetry: () {
+                      appStore.setLoading(true);
+                      init();
+                    },
+                  ),
+                ),
+              ),
+          ]);
+        },
       ),
-    ));
+    );
   }
 }

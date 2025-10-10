@@ -134,20 +134,20 @@ class _ProviderServiceComponentState extends State<ProviderServiceComponent> {
                   10.height,
                   Row(
                     children: [
-                      PriceWidget(
-                        size: 14,
-                        price: widget.serviceData!.price.validate(),
-                      ),
-                      8.width,
-                      if (widget.serviceData!.discount.validate() > 0)
-                        PriceWidget(
-                          size: 12,
-                          price: widget.serviceData!.getDiscountedPrice,
-                          isDiscountedPrice: true,
-                          color: textSecondaryColorGlobal,
-                          isLineThroughEnabled: true,
-                        ),
-                      10.width,
+                      // PriceWidget(
+                      //   size: 14,
+                      //   price: widget.serviceData!.getDiscountedPrice,
+                      // ),
+                      // 8.width,
+                      // if (widget.serviceData!.discount.validate() > 0)
+                      //   PriceWidget(
+                      //     size: 12,
+                      //     price: widget.serviceData!.price.validate(),
+                      //     isDiscountedPrice: true,
+                      //     color: textSecondaryColorGlobal,
+                      //     isLineThroughEnabled: true,
+                      //   ),
+                      // 10.width,
                       if (widget.serviceData!.discount.validate() > 0)
                         Text(
                           "${widget.serviceData!.discount.validate()}% off", //Todo translate

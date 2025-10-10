@@ -9,6 +9,8 @@ abstract class BaseLanguage {
 
   String get walkTitle3;
 
+  String get walkTitle4;
+
   String get getStarted;
 
   String get signIn;
@@ -164,6 +166,8 @@ abstract class BaseLanguage {
   String get walkThrough2;
 
   String get walkThrough3;
+
+  String get walkThrough4;
 
   String get lblNotification;
 

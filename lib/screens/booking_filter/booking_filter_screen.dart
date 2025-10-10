@@ -12,7 +12,7 @@ import '../../utils/colors.dart';
 import '../../utils/constant.dart';
 import 'components/filter_booking_status_component.dart';
 import 'components/filter_date_range_component.dart';
-import 'components/filter_handyman_list_component.dart';
+// import 'components/filter_handyman_list_component.dart';
 import 'components/filter_payment_status_component.dart';
 import 'components/filter_payment_type_component.dart';
 import 'components/filter_provider_list_component.dart';
@@ -36,7 +36,7 @@ class _BookingFilterScreenState extends State<BookingFilterScreen> {
     SERVICE,
     DATE_RANGE,
     PROVIDER,
-    HANDYMAN,
+    // HANDYMAN,
     BOOKING_STATUS,
     PAYMENT_TYPE,
     PAYMENT_STATUS,
@@ -196,8 +196,8 @@ class _BookingFilterScreenState extends State<BookingFilterScreen> {
                       return FilterDateRangeComponent();
                     } else if (e == PROVIDER) {
                       return FilterProviderListComponent();
-                    } else if (e == HANDYMAN) {
-                      return FilterHandymanListComponent();
+                    // } else if (e == HANDYMAN) {
+                    //   return FilterHandymanListComponent();
                     } else if (e == BOOKING_STATUS) {
                       return FilterBookingStatusComponent(bookingStatusList: bookingStatusList);
                     } else if (e == PAYMENT_TYPE) {

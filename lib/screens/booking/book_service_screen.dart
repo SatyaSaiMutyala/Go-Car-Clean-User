@@ -32,8 +32,16 @@ import 'component/coupon_list_screen.dart';
 class BookServiceScreen extends StatefulWidget {
   final ServiceDetailResponse data;
   final BookingPackage? selectedPackage;
+  final String bookingType;
+   final TextEditingController customerName;   // add this
+  final TextEditingController customerPhone;
+  final int? selectedPlanId;
+  final double? selectedPlanPrice;
+  final List<SelectedVehiclePlan> selectedExtraVehicles;
+  final int selectedWashWhere;
 
-  BookServiceScreen({required this.data, this.selectedPackage});
+  BookServiceScreen({required this.data, this.selectedPackage, this.bookingType = "daily", required this.customerName,
+    required this.customerPhone, this.selectedPlanId, this.selectedPlanPrice, this.selectedExtraVehicles = const [], this.selectedWashWhere = 0,});
 
   @override
   _BookServiceScreenState createState() => _BookServiceScreenState();
@@ -128,8 +136,16 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
   }
 
   void setPrice() {
+    double basePrice;
+
+  if (widget.selectedPlanPrice != null && widget.selectedPlanPrice! > 0) {
+    basePrice = widget.selectedPlanPrice!;
+  } else {
+    basePrice = widget.data.serviceDetail!.price.validate().toDouble(); // ✅ fix
+  }
+
     bookingAmountModel = finalCalculations(
-      servicePrice: widget.data.serviceDetail!.price.validate(),
+      servicePrice: basePrice,
       appliedCouponData: appliedCouponData,
       serviceAddons: serviceAddonStore.selectedServiceAddon,
       discount: widget.data.serviceDetail!.discount.validate(),
@@ -360,17 +376,23 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                           builder: (p0) {
                             return ConfirmBookingDialog(
                               data: widget.data,
-                              bookingPrice: bookingAmountModel.finalGrandTotalAmount,
+                              bookingPrice: bookingAmountModel.finalGrandTotalAmount + widget.selectedExtraVehicles.fold(0.0, (sum, e) => sum + e.price),
                               selectedPackage: widget.selectedPackage,
                               qty: itemCount,
                               couponCode: appliedCouponData?.code,
                               bookingAmountModel: BookingAmountModel(
                                 finalCouponDiscountAmount: bookingAmountModel.finalCouponDiscountAmount,
                                 finalDiscountAmount: bookingAmountModel.finalDiscountAmount,
-                                finalSubTotal: bookingAmountModel.finalSubTotal,
+                                finalSubTotal: bookingAmountModel.finalSubTotal + widget.selectedExtraVehicles.fold(0.0, (sum, e) => sum + e.price),
                                 finalTotalServicePrice: bookingAmountModel.finalTotalServicePrice,
                                 finalTotalTax: !widget.data.serviceDetail!.isFreeService ? bookingAmountModel.finalTotalTax : 0,
                               ),
+                              bookingType: widget.bookingType,
+                              customerName: widget.customerName.text.trim(),   // pass text value
+      customerPhone: widget.customerPhone.text.trim(),
+      selectedPlanId: widget.selectedPlanId,
+      selectedExtraVehicles: widget.selectedExtraVehicles,
+      selectedWashWhere: widget.selectedWashWhere,
                             );
                           },
                         );
@@ -506,7 +528,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
     );
   }
 
-  Widget priceWidget() {
+  Widget  priceWidget() {
     if (!widget.data.serviceDetail!.isFreeService)
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,7 +601,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                       Marquee(
                         child: Row(
                           children: [
-                            PriceWidget(price: widget.data.serviceDetail!.price.validate(), size: 12, isBoldText: false, color: textSecondaryColorGlobal),
+                            PriceWidget(price: widget.selectedPlanPrice.validate().toDouble(), size: 12, isBoldText: false, color: textSecondaryColorGlobal),
                             Text(' * $itemCount  = ', style: secondaryTextStyle()),
                             PriceWidget(price: bookingAmountModel.finalTotalServicePrice, color: textPrimaryColorGlobal),
                           ],
@@ -654,6 +676,48 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                     ],
                   ),
 
+/// Show Extra Vehicles Price (separately like addons)
+if (widget.selectedExtraVehicles.isNotEmpty)
+  Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Divider(height: 26, color: context.dividerColor),
+
+      // Section title
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("Extra Vehicles", style: secondaryTextStyle(size: 14))
+              .flexible(fit: FlexFit.loose),
+        ],
+      ),
+
+      8.height,
+
+      // List of extra vehicles with divider
+      for (int i = 0; i < widget.selectedExtraVehicles.length; i++) ...[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              widget.selectedExtraVehicles[i].vehicleName ?? "Extra Vehicle",
+              style: secondaryTextStyle(size: 14),
+            ).flexible(fit: FlexFit.loose),
+            16.width,
+            PriceWidget(
+              price: widget.selectedExtraVehicles[i].price,
+              color: textPrimaryColorGlobal,
+            ),
+          ],
+        ),
+
+        // Divider after each row except last one
+        if (i != widget.selectedExtraVehicles.length - 1)
+          Divider(height: 20, color: context.dividerColor),
+      ],
+    ],
+  ),
+
                 /// Show Subtotal, Total Amount and Apply Discount, Coupon if service is Fixed or Hourly
                 if (widget.selectedPackage == null)
                   Column(
@@ -664,7 +728,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                         children: [
                           Text(language.lblSubTotal, style: secondaryTextStyle(size: 14)).flexible(fit: FlexFit.loose),
                           16.width,
-                          PriceWidget(price: bookingAmountModel.finalSubTotal, color: textPrimaryColorGlobal),
+                          PriceWidget(price: bookingAmountModel.finalSubTotal + widget.selectedExtraVehicles.fold(0.0, (sum, e) => sum + e.price), color: textPrimaryColorGlobal),
                         ],
                       ),
                     ],
@@ -685,7 +749,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                                   showModalBottomSheet(
                                     context: context,
                                     builder: (_) {
-                                      return AppliedTaxListBottomSheet(taxes: widget.data.taxes.validate(), subTotal: bookingAmountModel.finalSubTotal);
+                                      return AppliedTaxListBottomSheet(taxes: widget.data.taxes.validate(), subTotal: bookingAmountModel.finalSubTotal + widget.selectedExtraVehicles.fold(0.0, (sum, e) => sum + e.price));
                                     },
                                   );
                                 },
@@ -707,7 +771,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                       children: [
                         Text(language.totalAmount, style: secondaryTextStyle(size: 14)).expand(),
                         PriceWidget(
-                          price: bookingAmountModel.finalGrandTotalAmount,
+                          price: bookingAmountModel.finalGrandTotalAmount + widget.selectedExtraVehicles.fold(0.0, (sum, e) => sum + e.price),
                           color: primaryColor,
                         )
                       ],
@@ -751,16 +815,29 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
   }
 
   Widget buildTimeWidget() {
-    if (widget.data.serviceDetail!.bookingSlot == null && widget.data.serviceDetail!.dateTimeVal == null) {
-      return Text(formatBookingDate(widget.data.serviceDetail!.dateTimeVal.validate(), format: HOUR_12_FORMAT), style: boldTextStyle(size: 12));
-    }
-    return Text(
-        TimeOfDay(
-          hour: widget.data.serviceDetail!.bookingSlot.validate().splitBefore(':').split(":").first.toInt(),
-          minute: widget.data.serviceDetail!.bookingSlot.validate().splitBefore(':').split(":").last.toInt(),
-        ).format(context),
-        style: boldTextStyle(size: 12));
+  final detail = widget.data.serviceDetail!;
+  
+  // If it's a slot-based service and bookingSlot has a value
+  if (detail.isSlot == 1 && detail.bookingSlot.validate().isNotEmpty) {
+    final parts = detail.bookingSlot!.split(":");
+    final hour = parts.first.toInt();
+    final minute = parts.last.toInt();
+    final time = TimeOfDay(hour: hour, minute: minute).format(context);
+    return Text(time, style: boldTextStyle(size: 12));
   }
+
+  // Otherwise, use dateTimeVal if available
+  if (detail.dateTimeVal != null) {
+    return Text(
+      formatBookingDate(detail.dateTimeVal!, format: HOUR_12_FORMAT),
+      style: boldTextStyle(size: 12),
+    );
+  }
+
+  // Default fallback
+  return Text('--', style: boldTextStyle(size: 12));
+}
+
 
   Widget buildBookingSummaryWidget() {
     return Column(

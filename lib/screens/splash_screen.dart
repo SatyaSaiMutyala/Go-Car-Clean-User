@@ -50,7 +50,10 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       int themeModeIndex = getIntAsync(THEME_MODE_INDEX, defaultValue: THEME_MODE_SYSTEM);
       if (themeModeIndex == THEME_MODE_SYSTEM) {
-        appStore.setDarkMode(MediaQuery.of(context).platformBrightness == Brightness.dark);
+        // appStore.setDarkMode(MediaQuery.of(context).platformBrightness == Brightness.dark);
+        appStore.setDarkMode(true);
+        defaultToastBackgroundColor = Colors.white;
+        defaultToastTextColor = Colors.black;
       }
       // Check if the user is unauthorized and logged in, then clear preferences and cached data.
       // This condition occurs when the user is marked as inactive from the admin panel,
@@ -85,7 +88,7 @@ class _SplashScreenState extends State<SplashScreen> {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            appStore.isDarkMode ? splash_background : splash_light_background,
+            appStore.isDarkMode ? splash_background : splash_background,
             height: context.height(),
             width: context.width(),
             fit: BoxFit.cover,

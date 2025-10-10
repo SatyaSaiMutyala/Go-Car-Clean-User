@@ -26,8 +26,15 @@ class ConfirmBookingDialog extends StatefulWidget {
   final String? couponCode;
   final BookingPackage? selectedPackage;
   final BookingAmountModel? bookingAmountModel;
+  final String bookingType;
+  final String customerName;  // new
+  final String customerPhone;
+  final int? selectedPlanId;
+  final List<SelectedVehiclePlan> selectedExtraVehicles;
+  final int selectedWashWhere;
 
-  ConfirmBookingDialog({required this.data, required this.bookingPrice, this.qty = 1, this.couponCode, this.selectedPackage, this.bookingAmountModel});
+  ConfirmBookingDialog({required this.data, required this.bookingPrice, this.qty = 1, this.couponCode, this.selectedPackage, this.bookingAmountModel, required this.bookingType,required this.customerName,
+    required this.customerPhone, this.selectedPlanId, this.selectedExtraVehicles = const [],this.selectedWashWhere = 0,});
 
   @override
   State<ConfirmBookingDialog> createState() => _ConfirmBookingDialogState();
@@ -71,7 +78,8 @@ class _ConfirmBookingDialogState extends State<ConfirmBookingDialog> {
       CommonKeys.address: widget.data.serviceDetail!.address.validate().toString(),
       CommonKeys.date: widget.data.serviceDetail!.isSlotAvailable ? widget.data.serviceDetail!.bookingDate.validate().toString() : widget.data.serviceDetail!.dateTimeVal.validate().toString(),
       BookingServiceKeys.couponId: widget.couponCode.validate(),
-      BookService.amount: widget.selectedPackage != null ? widget.selectedPackage!.price : widget.data.serviceDetail!.price,
+      // BookService.amount: widget.selectedPackage != null ? widget.selectedPackage!.price : widget.data.serviceDetail!.price,
+      BookService.amount: widget.selectedPackage != null ? widget.selectedPackage!.price : widget.bookingPrice,
       BookService.quantity: '${widget.qty}',
       BookingServiceKeys.totalAmount: !widget.data.serviceDetail!.isFreeService ? widget.bookingPrice.validate().toStringAsFixed(getIntAsync(PRICE_DECIMAL_POINTS)) : 0,
       CouponKeys.discount: widget.data.serviceDetail!.discount != null ? widget.data.serviceDetail!.discount.toString() : "",
@@ -79,6 +87,17 @@ class _ConfirmBookingDialogState extends State<ConfirmBookingDialog> {
       BookingServiceKeys.type: BOOKING_TYPE_SERVICE,
       BookingServiceKeys.bookingPackage: widget.selectedPackage != null ? selectedPackage : null,
       BookingServiceKeys.serviceAddonId: serviceAddonStore.selectedServiceAddon.map((e) => e.id).toList(),
+      "booking_type": widget.bookingType,
+      "customer_name": widget.customerName,
+  "customer_phone": widget.customerPhone,
+  "service_plan_id": widget.selectedPlanId ?? 0,
+  "extra_vehicles": widget.selectedExtraVehicles.map((e) => {
+    'service_id': 134,
+    'service_plan_id': e.planId,
+    'quantity': 1,
+    'price': double.tryParse(e.price.toString().replaceAll(RegExp(r'[^\d.]'), '')) ?? 0,
+  }).toList(),
+  "booking_at": widget.selectedWashWhere == 0 ? "home" : "shed",
     };
     if (widget.bookingAmountModel != null) {
       request.addAll(widget.bookingAmountModel!.toJson());

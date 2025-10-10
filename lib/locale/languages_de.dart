@@ -12,6 +12,9 @@ class LanguageDe extends BaseLanguage {
   String get walkTitle3 => 'Verfolgen und verwalten Sie Ihre Buchungen';
 
   @override
+  String get walkTitle4 => 'Verfolgen und verwalten Sie Ihre Buchungen';
+
+  @override
   String get getStarted => "Loslegen";
 
   @override
@@ -244,6 +247,9 @@ class LanguageDe extends BaseLanguage {
 
   @override
   String get walkThrough3 => 'Verfolgen Sie Ihren Servicestatus in Echtzeit. Sehen und verwalten Sie Ihre aktuellen und vergangenen Buchungen. Verschieben oder stornieren Sie anstehende Dienste mühelos.';
+
+@override
+  String get walkThrough4 => 'Verfolgen Sie Ihren Servicestatus in Echtzeit. Sehen und verwalten Sie Ihre aktuellen und vergangenen Buchungen. Verschieben oder stornieren Sie anstehende Dienste mühelos.';
 
   @override
   String get lblNotification => "Benachrichtigungen";
@@ -2116,4 +2122,6 @@ class LanguageDe extends BaseLanguage {
 
   @override
   String get chooseWithdrawalMethod => "Wählen Sie die Auszahlungsmethode";
+  
+
 }

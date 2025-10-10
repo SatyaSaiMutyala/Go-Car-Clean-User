@@ -32,6 +32,10 @@ class PriceCommonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double totalPreferencePrice = bookingDetail.extraVehicles.validate().fold<double>(
+  0,
+  (previousValue, element) => previousValue + (element.price?.toDouble() ?? 0),
+);
     if (bookingDetail.isFreeService && bookingDetail.bookingType.validate() == BOOKING_TYPE_SERVICE) return Offstage();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,6 +218,33 @@ class PriceCommonWidget extends StatelessWidget {
                       16.height,
                     ],
                   ),
+
+                  // ✅ Preferences Section
+// Calculate total preference price dynamically
+
+
+// Only show if there is a preference
+if (totalPreferencePrice > 0)
+  Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Preferences",
+            style: secondaryTextStyle(size: 14),
+          ).flexible(fit: FlexFit.loose),
+          16.width,
+          PriceWidget(
+            price: totalPreferencePrice,
+            color: textPrimaryColorGlobal,
+          ),
+        ],
+      ),
+      16.height,
+    ],
+  ),
+
 
                 /// Show Service Add-on Price
                 if (bookingDetail.serviceaddon.validate().isNotEmpty)

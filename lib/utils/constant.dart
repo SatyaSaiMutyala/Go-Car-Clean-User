@@ -44,6 +44,8 @@ const USER_CANNOT_LOGIN = "User can't login";
 const USER_NOT_FOUND = "User not found";
 
 const BOOKING_TYPE_ALL = 'all';
+const BOOKING_TYPE_INSTANT = "instance";
+const BOOKING_TYPE_DAILY = "daily";
 const CATEGORY_LIST_ALL = "all";
 
 const BOOKING_TYPE_USER_POST_JOB = 'user_post_job';

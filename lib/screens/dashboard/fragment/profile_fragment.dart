@@ -112,7 +112,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                       decoration: boxDecorationWithRoundedCorners(
                         borderRadius: radius(),
                         backgroundColor: appStore.isDarkMode ? context.cardColor : lightPrimaryColor,
-                        border: Border.all(color: primaryColor),
+                        // border: Border.all(color: primaryColor),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,10 +122,50 @@ class ProfileFragmentState extends State<ProfileFragment> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Stack(
-                                alignment: Alignment.bottomCenter,
-                                clipBehavior: Clip.none,
-                                children: [
-                                  CachedImageWidget(url: appStore.userProfileImage, height: 70, width: 70, circle: true, fit: BoxFit.cover).paddingBottom(6),
+  alignment: Alignment.bottomCenter,
+  clipBehavior: Clip.none,
+  children: [
+    // Circular border with image inside
+    Container(
+      padding: const EdgeInsets.all(3), // border thickness
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: primaryColor, width: 2),
+      ),
+      child: CachedImageWidget(
+        url: appStore.userProfileImage,
+        height: 70,
+        width: 70,
+        circle: true,
+        fit: BoxFit.cover,
+      ),
+    ),
+
+    // "Edit" label positioned at bottom
+    Positioned(
+      bottom: -10, // move below the circle border
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: context.primaryColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: primaryColor, width: 1),
+        ),
+        child: Row(
+          children: [
+            // const Icon(Icons.edit, size: 14, color: Colors.black54),
+            // const SizedBox(width: 4),
+            Padding(
+              padding: const EdgeInsets.only(left:  2.0, right: 2),
+              child: Text("Edit", style: secondaryTextStyle(size: 12, color: Colors.black, weight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ],
+),
+
                                   /*   Positioned(
                                     child: Container(
                                       alignment: Alignment.center,
@@ -140,8 +180,8 @@ class ProfileFragmentState extends State<ProfileFragment> {
                                       EditProfileScreen().launch(context);
                                     }),
                                   ),*/
-                                ],
-                              ),
+                                // ],
+                              // ),
                               24.width,
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,22 +194,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                           ).paddingOnly(left: 16, top: 16, bottom: 16).onTap(() {
                             EditProfileScreen().launch(context);
                           }),
-                          Container(
-                            decoration: boxDecorationDefault(borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)), color: primaryColor),
-                            child: Row(
-                              children: [
-                                Image.asset(ic_wallet_cartoon, height: 20),
-                                8.width,
-                                Text(language.walletBalance, style: boldTextStyle(color: whiteColor)).onTap(() {
-                                  if (appConfigurationStore.onlinePaymentStatus) {
-                                    UserWalletBalanceScreen().launch(context);
-                                  }
-                                }),
-                                Spacer(),
-                                Text(appStore.userWalletAmount.toPriceFormat(), style: boldTextStyle(color: whiteColor)),
-                              ],
-                            ).paddingAll(16),
-                          ).visible(appConfigurationStore.isEnableUserWallet),
+                          //
                         ],
                       ),
                     ).paddingOnly(left: 16, right: 16, top: 24),
@@ -180,13 +205,46 @@ class ProfileFragmentState extends State<ProfileFragment> {
                       divider: Offstage(),
                       headerPadding: EdgeInsets.only(bottom: 14, right: 14, left: 16, top: 14),
                       items: [
+//                         SettingItemWidget(
+//   decoration: boxDecorationDefault(color: context.cardColor),
+//   leading: Image.asset(ic_wallet_cartoon, height: 20),
+//   title: language.walletBalance,
+//   titleTextStyle: boldTextStyle(size: 12),
+//   padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 20),
+//   trailing: Text(
+//     appStore.userWalletAmount.toPriceFormat(),
+//     style: boldTextStyle(),
+//   ),
+//   onTap: () {
+//     if (appConfigurationStore.onlinePaymentStatus) {
+//       UserWalletBalanceScreen().launch(context);
+//     }
+//   },
+// ).visible(appConfigurationStore.isEnableUserWallet),
+if (appStore.isLoggedIn)
+                          SettingItemWidget(
+                            decoration: boxDecorationDefault(color: context.cardColor),
+                            leading: ic_wallet_cartoon.iconImage(size: SETTING_ICON_SIZE),
+                            title: language.walletBalance,
+                            titleTextStyle: boldTextStyle(size: 12),
+                            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                            trailing: Text(
+    appStore.userWalletAmount.toPriceFormat(),
+    style: boldTextStyle(),
+  ),
+                            onTap: () {
+                              if (appConfigurationStore.onlinePaymentStatus) {
+      UserWalletBalanceScreen().launch(context);
+    }
+                            },
+                          ),
                         if (appStore.isLoggedIn && appConfigurationStore.isEnableUserWallet)
                           SettingItemWidget(
                             decoration: boxDecorationDefault(color: context.cardColor),
                             leading: ic_wallet_history.iconImage(size: SETTING_ICON_SIZE),
                             title: language.walletHistory,
                             titleTextStyle: boldTextStyle(size: 12),
-                            padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                             trailing: trailing,
                             onTap: () {
                               UserWalletHistoryScreen().launch(context);
@@ -199,31 +257,61 @@ class ProfileFragmentState extends State<ProfileFragment> {
                             title: language.lblBankDetails,
                             titleTextStyle: boldTextStyle(size: 12),
                             trailing: trailing,
-                            padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                             onTap: () {
                               BankDetails().launch(context);
                             },
                           ),
+if (appStore.isLoggedIn)
                         SettingItemWidget(
                           decoration: boxDecorationDefault(color: context.cardColor),
                           leading: ic_heart.iconImage(size: SETTING_ICON_SIZE),
                           title: language.lblFavorite,
                           titleTextStyle: boldTextStyle(size: 12),
                           trailing: trailing,
-                          padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                           onTap: () {
                             doIfLoggedIn(context, () {
                               FavouriteServiceScreen().launch(context);
                             });
                           },
                         ),
+// if (appStore.isLoggedIn)
+//                         SettingItemWidget(
+//                           decoration: boxDecorationDefault(color: context.cardColor),
+//                           leading: ic_profile2.iconImage(size: SETTING_ICON_SIZE),
+//                           title: "Subscription Plans",
+//                           titleTextStyle: boldTextStyle(size: 12),
+//                           trailing: trailing,
+//                           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+//                           onTap: () {
+//                             doIfLoggedIn(context, () {
+//                               FavouriteProviderScreen().launch(context);
+//                             });
+//                           },
+//                         ),
+// if (appStore.isLoggedIn)
+//                         SettingItemWidget(
+//                           decoration: boxDecorationDefault(color: context.cardColor),
+//                           leading: ic_profile2.iconImage(size: SETTING_ICON_SIZE),
+//                           title: "Bid List",
+//                           titleTextStyle: boldTextStyle(size: 12),
+//                           trailing: trailing,
+//                           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+//                           onTap: () {
+//                             doIfLoggedIn(context, () {
+//                               FavouriteProviderScreen().launch(context);
+//                             });
+//                           },
+//                         ),
+if (appStore.isLoggedIn)
                         SettingItemWidget(
                           decoration: boxDecorationDefault(color: context.cardColor),
                           leading: ic_profile2.iconImage(size: SETTING_ICON_SIZE),
                           title: language.favouriteProvider,
                           titleTextStyle: boldTextStyle(size: 12),
                           trailing: trailing,
-                          padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                           onTap: () {
                             doIfLoggedIn(context, () {
                               FavouriteProviderScreen().launch(context);
@@ -237,7 +325,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                             title: language.blogs,
                             titleTextStyle: boldTextStyle(size: 12),
                             trailing: trailing,
-                            padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                             onTap: () {
                               BlogListScreen().launch(context);
                             },
@@ -249,8 +337,9 @@ class ProfileFragmentState extends State<ProfileFragment> {
                           title: language.rateUs,
                           titleTextStyle: boldTextStyle(size: 12),
                           trailing: trailing,
-                          padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                           onTap: () async {
+                            // toast("Tank you for Rating Us...");
                             if (isAndroid) {
                               if (getStringAsync(CUSTOMER_PLAY_STORE_URL).isNotEmpty) {
                                 commonLaunchUrl(getStringAsync(CUSTOMER_PLAY_STORE_URL), launchMode: LaunchMode.externalApplication);
@@ -273,7 +362,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                           titleTextStyle: boldTextStyle(size: 12),
                           trailing: trailing,
                           padding:
-                              appStore.isLoggedIn ? EdgeInsets.only(bottom: appStore.isLoggedIn ? 0 : 16, top: 20, left: 16, right: 16) : EdgeInsets.only(bottom: 16, right: 16, left: 16, top: 20),
+                              appStore.isLoggedIn ? EdgeInsets.symmetric(vertical: 12, horizontal: 16) : EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                           onTap: () async {
                             doIfLoggedIn(context, () {
                               CustomerRatingScreen().launch(context);
@@ -289,7 +378,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                             trailing: trailing,
                             highlightColor: Colors.transparent,
                             splashColor: Colors.transparent,
-                            padding: EdgeInsets.only(bottom: 16, right: 16, left: 16, top: 20),
+                            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                             onTap: () {
                               HelpDeskListScreen().launch(context);
                             },
@@ -318,7 +407,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                         leading: ic_about_us.iconImage(size: SETTING_ICON_SIZE),
                         title: language.lblAboutApp,
                         titleTextStyle: boldTextStyle(size: 12),
-                        padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         onTap: () {
                           AboutScreen().launch(context);
                         },
@@ -328,7 +417,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                         leading: ic_shield_done.iconImage(size: SETTING_ICON_SIZE),
                         title: language.privacyPolicy,
                         titleTextStyle: boldTextStyle(size: 12),
-                        padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         onTap: () {
                           checkIfLink(context, appConfigurationStore.privacyPolicy, title: language.privacyPolicy);
                         },
@@ -338,7 +427,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                         leading: ic_document.iconImage(size: SETTING_ICON_SIZE),
                         title: language.termsCondition,
                         titleTextStyle: boldTextStyle(size: 12),
-                        padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         onTap: () {
                           checkIfLink(context, appConfigurationStore.termConditions, title: language.termsCondition);
                         },
@@ -348,7 +437,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                         leading: ic_refund.iconImage(size: SETTING_ICON_SIZE),
                         title: language.refundPolicy,
                         titleTextStyle: boldTextStyle(size: 12),
-                        padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                         onTap: () {
                           checkIfLink(context, appConfigurationStore.refundPolicy, title: language.refundPolicy);
                         },
@@ -359,7 +448,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                           leading: ic_helpAndSupport.iconImage(size: SETTING_ICON_SIZE),
                           title: language.helpSupport,
                           titleTextStyle: boldTextStyle(size: 12),
-                          padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                           onTap: () {
                             if (appConfigurationStore.helpAndSupport.isNotEmpty) {
                               checkIfLink(context, appConfigurationStore.helpAndSupport, title: language.helpSupport);
@@ -376,7 +465,7 @@ class ProfileFragmentState extends State<ProfileFragment> {
                           leading: ic_calling.iconImage(size: SETTING_ICON_SIZE),
                           title: language.lblHelplineNumber,
                           titleTextStyle: boldTextStyle(size: 12),
-                          padding: EdgeInsets.only(bottom: appStore.isLoggedIn ? 16 : 0, right: 16, left: 16, top: 20),
+                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
                           onTap: () {

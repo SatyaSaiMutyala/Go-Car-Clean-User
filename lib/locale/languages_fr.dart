@@ -12,6 +12,9 @@ class LanguageFr extends BaseLanguage {
   String get walkTitle3 => 'Suivez et gérez vos réservations';
 
   @override
+  String get walkTitle4 => 'Suivez et gérez vos réservations';
+
+  @override
   String get getStarted => "Commencer";
 
   @override
@@ -245,6 +248,9 @@ class LanguageFr extends BaseLanguage {
 
   @override
   String get walkThrough3 => "Gardez une trace de l'état de votre service en temps réel. Consultez et gérez vos réservations actuelles et passées. Reprogrammez ou annulez les services à venir sans effort.";
+
+  @override
+  String get walkThrough4 => "Gardez une trace de l'état de votre service en temps réel. Consultez et gérez vos réservations actuelles et passées. Reprogrammez ou annulez les services à venir sans effort.";
 
   @override
   String get lblNotification => "Notifications";
@@ -2117,4 +2123,5 @@ class LanguageFr extends BaseLanguage {
 
   @override
   String get chooseWithdrawalMethod => "Choisissez la méthode de retrait";
+
 }

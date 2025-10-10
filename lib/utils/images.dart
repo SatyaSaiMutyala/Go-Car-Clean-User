@@ -111,3 +111,15 @@ const ic_down_arrow = 'assets/icons/ic_down_arrow.png';
 const ic_right = 'assets/icons/ic_right.png';
 const ic_plus = 'assets/icons/ic_plus.png';
 const ic_wallet_cartoon = 'assets/icons/ic_wallet_cartoon.png';
+
+const car_image = 'assets/images/car.png';
+const bike_image = 'assets/images/bike.png';
+const scooty_image = 'assets/images/scooty.png';
+const bus_image = 'assets/images/bus.png';
+const car_xuv300 = 'assets/images/xuv300.png';
+const car_xuv400 = 'assets/images/xuv400.png';
+const car_xuv500 = 'assets/images/xuv500.png';
+const filter_image = 'assets/images/filter.png';
+const vector_image = 'assets/images/Vector.png';
+const model1_image = 'assets/images/model_image1.png';
+const model2_image = 'assets/images/model_image2.png';

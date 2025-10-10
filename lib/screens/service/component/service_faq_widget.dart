@@ -22,7 +22,7 @@ class ServiceFaqWidget extends StatelessWidget {
         tilePadding: EdgeInsets.symmetric(horizontal: 16),
         children: [
           ListTile(
-            title: Text(serviceFaq.description.validate(), style: secondaryTextStyle(),),
+            title: Text(serviceFaq.description.validate(), style: primaryTextStyle(),),
             contentPadding: EdgeInsets.only(left: 32),
           ),
         ],

@@ -13,6 +13,9 @@ class LanguageHi extends BaseLanguage {
   String get walkTitle3 => 'अपनी बुकिंग को ट्रैक और प्रबंधित करें';
 
   @override
+  String get walkTitle4 => 'अपनी बुकिंग को ट्रैक और प्रबंधित करें';
+
+  @override
   String get getStarted => 'शुरू हो जाओ';
 
   @override
@@ -245,6 +248,9 @@ class LanguageHi extends BaseLanguage {
 
   @override
   String get walkThrough3 => 'वास्तविक समय में अपनी सेवा की स्थिति पर नज़र रखें। अपनी वर्तमान और पिछली बुकिंग देखें और प्रबंधित करें। आगामी सेवाओं को सहजता से पुनर्निर्धारित या रद्द करें।';
+
+  @override
+  String get walkThrough4 => 'वास्तविक समय में अपनी सेवा की स्थिति पर नज़र रखें। अपनी वर्तमान और पिछली बुकिंग देखें और प्रबंधित करें। आगामी सेवाओं को सहजता से पुनर्निर्धारित या रद्द करें।';
 
   @override
   String get lblNotification => "अधिसूचनाएं";
@@ -2117,4 +2123,5 @@ class LanguageHi extends BaseLanguage {
 
   @override
   String get chooseWithdrawalMethod => "निकासी विधि चुनें";
+  
 }

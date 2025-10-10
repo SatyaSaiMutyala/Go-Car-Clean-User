@@ -61,10 +61,13 @@ class _AddonComponentState extends State<AddonComponent> {
           list: [],
           onTap: () {},
         ),
-        isSingleAddon ? buildSingleAddonWidget(widget.serviceAddon[0]) : buildMultipleAddonsWidget(),
+        isSingleAddon
+            ? buildSingleAddonWidget(widget.serviceAddon[0])
+            : buildMultipleAddonsWidget(),
       ],
     ).paddingSymmetric(
-      horizontal: widget.isFromBookingLastStep || widget.isFromBookingDetails ? 0 : 16,
+      horizontal:
+          widget.isFromBookingLastStep || widget.isFromBookingDetails ? 0 : 16,
     );
   }
 
@@ -73,36 +76,61 @@ class _AddonComponentState extends State<AddonComponent> {
       width: context.width(),
       padding: EdgeInsets.all(16),
       decoration: boxDecorationWithRoundedCorners(
-        border: appStore.isDarkMode ? Border.all(color: context.dividerColor) : null,
+        border: appStore.isDarkMode
+            ? Border.all(color: context.dividerColor)
+            : null,
         borderRadius: radius(),
         backgroundColor: context.cardColor,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Marquee(
-                  directionMarguee: DirectionMarguee.oneDirection, // Scrolling text
+          /// 🔹 Image (1st column)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: addon.serviceAddonImage.isNotEmpty
+                ? Image.network(
+                    addon.serviceAddonImage,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Icon(
+                        Icons.image_not_supported,
+                        size: 50,
+                        color: Colors.grey),
+                  )
+                : Icon(Icons.image, size: 50, color: Colors.grey),
+          ),
+
+          const SizedBox(width: 12),
+
+          /// 🔹 Name + Price (2nd column)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Marquee(
+                  directionMarguee: DirectionMarguee.oneDirection,
                   child: Text(
                     addon.name.validate(),
                     style: boldTextStyle(),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
-              8.width,
-              if (!widget.isFromBookingDetails) buildAddButton(addon),
-            ],
+                const SizedBox(height: 6),
+                PriceWidget(
+                  price: addon.price.validate(),
+                  hourlyTextColor: Colors.white,
+                  size: 12,
+                ),
+              ],
+            ),
           ),
-          10.height,
-          PriceWidget(
-            price: addon.price.validate(),
-            hourlyTextColor: Colors.white,
-            size: 12,
-          ),
+
+          const SizedBox(width: 8),
+
+          /// 🔹 Add/Remove Button (3rd column)
+          if (!widget.isFromBookingDetails) buildAddButton(addon),
         ],
       ),
     );
@@ -110,8 +138,8 @@ class _AddonComponentState extends State<AddonComponent> {
 
   Widget buildMultipleAddonsWidget() {
     return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
+      scrollDirection: Axis.vertical, // 👈 vertical scrolling
+      child: Column(
         children: List.generate(
           widget.serviceAddon.length,
           (i) {
@@ -119,7 +147,8 @@ class _AddonComponentState extends State<AddonComponent> {
             return Observer(builder: (context) {
               return GestureDetector(
                 onTap: () {
-                  if (!widget.isFromBookingLastStep && !widget.isFromBookingDetails) {
+                  if (!widget.isFromBookingLastStep &&
+                      !widget.isFromBookingDetails) {
                     handleAddRemove(data);
                   }
                 },
@@ -135,22 +164,44 @@ class _AddonComponentState extends State<AddonComponent> {
 
   Widget buildAddonContainer(Serviceaddon data) {
     return Container(
-      width: context.isPhone() ? context.width() - 60 : 300,
-      margin: EdgeInsets.only(right: 16),
-      padding: EdgeInsets.all(16),
+      width: context.isPhone() ? double.infinity : 300,
+      margin: EdgeInsets.only(right: context.isPhone() ? 0 : 16, bottom: 12),
+      padding: const EdgeInsets.all(12),
       decoration: boxDecorationWithRoundedCorners(
-        border: appStore.isDarkMode ? Border.all(color: context.dividerColor) : null,
+        border: appStore.isDarkMode
+            ? Border.all(color: context.dividerColor)
+            : null,
         borderRadius: radius(),
         backgroundColor: context.cardColor,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Marquee(
+          /// 🔹 Image (1st column)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: data.serviceAddonImage.isNotEmpty
+                ? Image.network(
+                    data.serviceAddonImage,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Icon(
+                        Icons.image_not_supported,
+                        size: 50,
+                        color: Colors.grey),
+                  )
+                : Icon(Icons.image, size: 50, color: Colors.grey),
+          ),
+
+          const SizedBox(width: 12),
+
+          /// 🔹 Name + Price (2nd column)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Marquee(
                   directionMarguee: DirectionMarguee.oneDirection,
                   child: Text(
                     data.name.validate(),
@@ -158,42 +209,49 @@ class _AddonComponentState extends State<AddonComponent> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
-              8.width,
-              if (!widget.isFromBookingDetails) buildAddButton(data),
-            ],
+                const SizedBox(height: 6),
+                PriceWidget(
+                  price: data.price.validate(),
+                  hourlyTextColor: Colors.white,
+                  size: 12,
+                ),
+              ],
+            ),
           ),
-          10.height,
-          PriceWidget(
-            price: data.price.validate(),
-            hourlyTextColor: Colors.white,
-            size: 12,
-          ),
+
+          const SizedBox(width: 8),
+
+          /// 🔹 Add/Remove Button (3rd column)
+          if (!widget.isFromBookingDetails) buildAddButton(data),
         ],
       ),
     );
   }
 
   Widget buildAddButton(Serviceaddon data) {
-    return Container(
-      decoration: BoxDecoration(
-        color: appStore.isDarkMode ? Colors.black : Colors.white,
-        borderRadius: radius(5),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Center(
-        child: Text(
-          data.isSelected ? language.remove : language.add, // Toggle between Add and Remove
-          textAlign: TextAlign.center,
-          style: boldTextStyle(color: context.primaryColor, size: 12),
+    return GestureDetector(
+      onTap: () => handleAddRemove(data),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: Colors.transparent, // optional background
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Icon(
+          data.isSelected
+              ? Icons.check_box_rounded // ✅ Selected
+              : Icons.check_box_outline_blank, // ⬜ Not selected
+          color: data.isSelected ? Colors.blue : Colors.grey,
+          size: 24,
         ),
       ),
-    ).onTap(() => handleAddRemove(data));
+    );
   }
 
   void handleAddRemove(Serviceaddon data) {
     data.isSelected = !data.isSelected;
-    selectedServiceAddon = widget.serviceAddon.where((p0) => p0.isSelected).toList();
+    selectedServiceAddon =
+        widget.serviceAddon.where((p0) => p0.isSelected).toList();
     widget.onSelectionChange?.call(selectedServiceAddon);
     setState(() {});
   }
